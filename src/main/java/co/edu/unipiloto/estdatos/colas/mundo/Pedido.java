@@ -15,12 +15,10 @@ public class Pedido {
     private LocalTime horaPedido;
     private final Producto producto;
     private final String direccion;
-    private final boolean esDomicilio;
 
-    public Pedido(LocalTime horaPedido, Producto producto, String direccion, boolean esDomicilio) {
+    public Pedido(LocalTime horaPedido, Producto producto, String direccion) {
         this.horaPedido = horaPedido;
         this.producto = producto;
-        this.esDomicilio = esDomicilio;
         this.direccion = direccion;
     }
 
@@ -36,13 +34,9 @@ public class Pedido {
         return direccion;
     }
 
-    public boolean isEsDomicilio() {
-        return esDomicilio;
-    }
-
     @Override
     public String toString() {
-        return "Pedido{" + "horaPedido=" + horaPedido + ", producto=" + producto.getNombre() + ", direccion=" + direccion + ", esDomicilio=" + esDomicilio + '}';
+        return "Pedido{" + "horaPedido=" + horaPedido + ", producto=" + producto.getNombre() + ", direccion=" + direccion + '}';
     }
 
 }

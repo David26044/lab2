@@ -60,7 +60,13 @@ public class McDonaldsCLI {
             System.out.println("3. Entregar pedido");
             System.out.println("4. Cantidad de clientes en cola");
             System.out.println("5. Cola de pedidos en cocina");
-            System.out.println("6. Salir");
+            System.out.println("6. Agregar un domicilio");
+            System.out.println("7. Despachar un domicilio");
+            System.out.println("8. Ver cantidad de domicilios en cola");
+            System.out.println("9. Ver catalogo de productos");
+            System.out.println("10. Agregar producto a la cola");
+            System.out.println("11. Eliminar producto de la cola");
+            System.out.println("12. Salir");
             System.out.print("\nSeleccione una opción: ");
             int opt1 = in.nextInt();
             in.nextLine();
@@ -81,12 +87,110 @@ public class McDonaldsCLI {
                     pedidos();
                     break;
                 case 6:
+                    agregarDomicilio();
+                    break;
+                case 7:
+                    despacharDomicilio();
+                    break;
+                case 8:
+                    cDomicilios();
+                    break;
+                case 9:
+                    catalogoProductos();
+                    break;
+                case 10:
+                    agregarProducto();
+                    break;
+                case 11:
+                    eliminarProducto();
+                    break;
+                case 12:
                     finish = true;
                     break;
-                default:
+                default: 
                     break;
             }
         }
+    }
+
+    /*
+    finish = true;
+                    break;
+
+f.       Eliminar producto del catálogo
+     */
+    private void eliminarProducto() {
+        System.out.println("Eliminar producto del catalogo");
+        System.out.println("Se eliminó el producto: " + admin.eliminarProducto());
+    }
+
+    private void agregarProducto() {
+        System.out.println("Agregar producto al catalogo");
+        Producto p = null; // nombre, tiempo preparacion, costo
+        String nombre;
+        int tiempo;
+        int costo;
+        System.out.println("Ingrese el nombre del producto:");
+        nombre = in.nextLine();
+        System.out.println("Ingrese el tiempo de preparacion:");
+        tiempo = in.nextInt();
+        System.out.println("Ingrese el costo:");
+        costo = in.nextInt();
+        p = new Producto(nombre, tiempo, costo);
+        admin.agregarProducto(p);
+    }
+
+    private void catalogoProductos() {
+        int i = 1;
+        for (Object p : admin.getCatalogoProductos()) {
+            System.out.println(i + ". " + p.toString());
+            i++;
+        }
+    }
+
+    private void cDomicilios() {
+        System.out.println("Hay " + admin.cDomicilios() + " domicilios en la cola");
+    }
+
+    private void agregarDomicilio() throws InterruptedException {
+        boolean finish = false;
+        String direccion = "";
+        Pedido or = null;
+        while (!finish) {
+            System.out.println("Agregar un domicilio nuevo a la cola del restaurante");
+            System.out.println("Escoja la orden del domicilio:");
+            int i = 1;
+            for (Object p : admin.getCatalogoProductos()) {
+                System.out.println(i + ". " + p.toString());
+                i++;
+            }
+            int orden = in.nextInt();
+            Producto pro = (Producto) admin.getCatalogoProductos().search(orden - 1);
+            in.nextLine();
+            System.out.println("Ingrese la direccion de entrega:");
+            direccion = in.nextLine();
+            or = new Pedido(LocalTime.now(), pro, direccion);
+            admin.agregarDomicilio(or);
+            System.out.println("Se agregó el domicilio con direccion " + direccion + " a la cola del restaurante");
+            System.out.println("Presione enter para volver al menú principal");
+            in.nextLine();
+            finish = true;
+        }
+
+    }
+
+    private void despacharDomicilio() {
+        if (admin.cDomicilios() == 0) {
+            System.out.println("No hay domicilios en espera");
+            return;
+        }
+        System.out.println("Entregar el primer domicilio");
+        System.out.println("----------------------------------");
+        System.out.println("Prepadando pedido porfavor espere .......");
+        String pedido = admin.entregarDomicilio();
+        System.out.println("Se despachó el domicilio con: " + pedido);
+        System.out.println("Presione enter para volver al menú principal");
+        in.nextLine();
     }
 
     private void agregarCliente() throws InterruptedException {
@@ -116,6 +220,7 @@ public class McDonaldsCLI {
             System.out.println("Atender al primer cliente de la cola");
             System.out.println("----------------------------------");
             System.out.println("Escoja la orden del cliente:");
+            String nombre;
             int i = 1;
             for (Object p : admin.getCatalogoProductos()) {
                 System.out.println(i + ". " + p.toString());
@@ -125,19 +230,9 @@ public class McDonaldsCLI {
             Pedido or = null;
             in.nextLine();
             Producto pro = (Producto) admin.getCatalogoProductos().search(orden - 1);
-            //String horaPedido, Producto producto, String direccion, boolean esDomicilio
-            System.out.println("Es un domicilio?, true: si, false: no");
-            boolean domi = in.nextBoolean();
-            if (domi) {
-                System.out.println("Ingrese la direccion: ");
-                in.nextLine();
-                String direccion = in.nextLine();
-                or = new Pedido(LocalTime.now(), pro, direccion, domi);
-            } else {
-                or = new Pedido(LocalTime.now(), pro, "En la tienda", domi);
-            }
+            or = new Pedido(LocalTime.now(), pro, "En la tienda");
+            nombre = admin.atenderCliente(or);
             System.out.println("atendiendo cliente por favor espere...");
-            String nombre = admin.atenderCliente(or);
             System.out.println("Se agregó la orden " + orden + " a la cola de pedidos de la cocina, a nombre del cliente " + nombre);
             System.out.println("Presione enter para volver al menú principal");
             in.nextLine();

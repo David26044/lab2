@@ -79,8 +79,9 @@ public class ListaDobleEncadenada<E> implements Iterable<E> {
         }
         E element = (E) last.getElement();
         NodoLista temp = last;
-        last = null;
+        temp = null;
         last = last.getPrev();
+        last.setNext(null);
         size--;
         return element;
     }
